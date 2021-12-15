@@ -1,0 +1,35 @@
+{
+  "sherpa_version": null,
+  "r_version": null,
+  "targets_version": null,
+  "database": {
+    "type": "{{cookiecutter.db_type}}",
+    "migrate_fn": null,
+    "params": {
+      "project": "{{cookiecutter.pid}}",
+      "dataset": "{{cookiecutter.dataset}}"
+    }
+  },
+  "tables": [
+    {
+      "name": null,
+      "src": null,
+      "versions": []
+    }
+  ],
+  "datasets": [
+    {
+      "name": null,
+      "table_versions": [
+        {
+          "name": null,
+          "version": null
+        },
+        {
+          "name": null,
+          "version": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.linting.mypyEnabled": true,
+  "[python]": {
+      "editor.tabSize": 4
+  },
+  "[R]": {
+      "editor.tabSize": 2
+  },
+"files.trimTrailingWhitespace": true,
+"python.linting.flake8Enabled": false,
+"r.rpath.linux": "/usr/bin/R",
+"r.debugger.timeouts.startup": 10000,
+"python.testing.pytestArgs": [
+  "tests",
+  "-s"
+],
+"python.testing.unittestEnabled": false,
+"python.testing.pytestEnabled": true
+}

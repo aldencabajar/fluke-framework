@@ -1,0 +1,45 @@
+{
+  "configurations": [
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+        "name": "test_project_create_cli",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/sherpa/cli/project_create.py",
+        "python": "${env:HOME}/.virtualenvs/sherpa-dev/bin/python",
+        "args": [
+          "--pid", "bar",
+          "--dataset", "foobar",
+          "my-new-project"
+        ]
+    },
+    {
+        "name": "test_project_query",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/sherpa/cli/query_tables.py",
+        "python": "${env:HOME}/.virtualenvs/sherpa-dev/bin/python",
+        "args": [
+          "--version", "temp_fubar",
+          "comorbidities_table",
+        ]
+    },
+    {
+        "name": "test_dataset_cli",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/sherpa/cli/dataset.py",
+        "python": "${env:HOME}/.virtualenvs/sherpa-dev/bin/python",
+        "args": [
+          "migrate", "--all",
+          "20211204"
+        ]
+    },
+  ]
+}

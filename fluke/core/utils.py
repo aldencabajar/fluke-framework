@@ -33,7 +33,10 @@ def find_root_proj() -> Path:
     Find the root project path starting from current directory
     """
     curr_path = Path.cwd()
-    while 'sherpa-config.json' not in os.listdir(curr_path):
+    immediate = curr_path.parent
+    rproj_file = f'{str(curr_path.relative_to(immediate))}.Rproj'
+
+    while rproj_file not in os.listdir(curr_path):
         prev_path = copy(curr_path)
         curr_path = prev_path.parent
         if curr_path == prev_path:
@@ -41,10 +44,11 @@ def find_root_proj() -> Path:
                 'Cannot find \'sherpa-config.json\'. '
                 'you must be inside a sherpa project dir.')
             )
+        immediate = curr_path.parent
+        rproj_file = f'{str(curr_path.relative_to(immediate))}.Rproj'
+
 
     return curr_path.resolve()
-
-
 
 
 def _is_rscript(file: Path) -> bool:

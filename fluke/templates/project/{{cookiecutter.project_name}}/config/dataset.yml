@@ -1,0 +1,20 @@
+# write input datasets here, and other config
+#
+# Declare dataset objects under `datasets`. Other config should be declared
+# outside.
+# ==== EXAMPLE ======================================
+# database: &db1
+#   type: `database_type`
+#   project_id:
+#   dataset:
+
+# datasets:
+#   query_dataset1:
+#     type: QueryDataset
+#     script: queries/create_query_dataset1.R
+#     <<: *db1
+
+#   required_data:
+#     type: csv
+#     location: data/required_data_v1.csv
+

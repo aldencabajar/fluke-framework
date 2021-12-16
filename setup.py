@@ -1,3 +1,4 @@
+"""setup for fluke-framework package"""
 from setuptools import setup
 
 setup(

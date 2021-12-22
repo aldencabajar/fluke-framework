@@ -12,26 +12,32 @@
     "bigrquery": {
       "Package": "bigrquery",
       "Version": "1.4.0",
-      "Source": "Repository"
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "here": {
       "Package": "here",
       "Version": "1.0.1",
-      "Source": "Repository"
+      "Source": "Repository",
+      "Repository": "CRAN"
     },
     "renv": {
       "Package": "renv",
       "Version": "0.14.0",
       "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "30e5eba91b67f7f4d75d31de14bbfbdc"
+      "Repository": "CRAN"
     },
     "targets": {
       "Package": "targets",
       "Version": "0.8.1",
       "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "082656166cf9d1286c0cbf59b555eb1e"
+      "Repository": "CRAN"
+    },
+    "devtools": {
+      "Package": "devtools",
+      "Version": "0.8.1",
+      "Source": "Repository",
+      "Repository": "CRAN"
     }
   }
 }

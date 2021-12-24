@@ -1,15 +1,23 @@
 import os
+import re
 import json
-import tempfile
+import string
+from typing import Optional
+from click.exceptions import ClickException
+from click.termui import prompt
 import fluke
 import shutil
+from functools import wraps
 from pathlib import Path
 import click
 from cookiecutter.main import cookiecutter
+from tempfile import TemporaryDirectory
 from distutils.dir_util import copy_tree
 from fluke.core.utils import (
   get_date_and_format,
-  get_cookiecutter_cfg
+  get_cookiecutter_cfg,
+  cwd,
+  run_r
   )
 
 template_dir = Path(
@@ -19,7 +27,7 @@ template_dir = Path(
 )
 
 config_path = get_cookiecutter_cfg(template_dir)
-with config_path.open('r') as file:
+with config_path.open('r', encoding='utf-8') as file:
     config = json.load(file)
 
 
@@ -28,48 +36,87 @@ def create_cli() -> None:
     pass
 
 
+def _project_cleanup(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except (SystemExit, Exception) as error:
+            click.echo(error)
+    return wrapper
+
+def _is_pkgname_valid(pkg_name: str) -> bool:
+    # valid characters
+    _chars = string.ascii_lowercase + '_'
+    for chr in pkg_name:
+        if chr not in _chars:
+            raise Exception(
+                ('Package name must only contain '
+                'lowercase letters and `_`.'
+                )
+            )
+    return True
+
+def _is_projname_valid(proj_name: str) -> bool:
+    # valid characters
+    _chars = re.escape(string.ascii_lowercase + '_-')
+    for chr in proj_name:
+        if chr not in _chars:
+            raise Exception(
+                ('Project name must only contain '
+                'lowercase letters and `_|-`.'
+                )
+            )
+    return True
+
+
 @create_cli.command()
 @click.option("--path", "-p", "path", default=str(Path.cwd()))
-@click.option("--db",  "db_type", default='bigquery')
-@click.option("--pid", "project_id", required=True)
-@click.option("--dataset", "dataset", required=True)
-@click.argument("project_name", required=True)
-def create(path: str, project_name: str,
-           project_id: str, db_type: str,
-           dataset: str) -> None:
-    """"""
+@click.option('--pkg_name', required=False)
+@click.argument("project_name", required=False)
+@_project_cleanup
+def create(path: str, pkg_name: Optional[str], project_name: Optional[str]) -> None:
+    """
+    CLI command to create a Fluke project.
+    """
+    if project_name is None:
+        project_name = click.prompt('Name of project')
+    _is_projname_valid(project_name)
+
+    if pkg_name is None:
+        pkg_name = click.prompt('Name of R package')
+    _is_pkgname_valid(pkg_name)
 
     # add needed settings to config file
     config['project_name'] = project_name
-    config['db_type'] = db_type
-    config['pid'] = project_id
-    config['dataset'] = dataset
-    config['version'] = get_date_and_format()
+    config['pkg_name'] = pkg_name
 
     # create a tempdir to copy config and relevant template files
-    tmp_dir = Path(tempfile.mkdtemp(prefix='sherpa'))
-    ck_dir = '{{cookiecutter.project_name}}'
-    copy_tree(
-        str(Path(template_dir, ck_dir)),
-        str(Path(tmp_dir, ck_dir))
-    )
+    with TemporaryDirectory(prefix='fluke') as temp_dir:
+        ck_dir = '{{cookiecutter.project_name}}'
+        copy_tree(
+            str(Path(template_dir, ck_dir)),
+            str(Path(temp_dir, ck_dir))
+        )
 
-    json_path = Path(tmp_dir, 'cookiecutter.json')
-    with json_path.open('w') as f:
-        json.dump(config, f)
+        json_path = Path(temp_dir, 'cookiecutter.json')
+        with json_path.open('w', encoding='utf-8') as json_file:
+            json.dump(config, json_file)
 
-    # use cookiecutter to transform template to dir with info
-    path_to_output = os.path.expanduser(path)
-    cookiecutter(str(tmp_dir), output_dir=path_to_output, no_input=True)
+        # use cookiecutter to transform template to dir with info
+        path_to_output = Path(path).expanduser()
+        path_to_project = Path(path_to_output, Path(project_name))
+        cookiecutter(str(temp_dir), output_dir=str(path_to_output), no_input=True)
+        click.echo(f'Created project "{project_name}" at "{str(path_to_output)}"')
 
-    # cleanup process
-    shutil.rmtree(str(tmp_dir))
-    click.echo(f'Created project "{project_name}" at "{path_to_output}"')
+    with cwd(path_to_project):
+        # run project initialization
+        click.echo('Initializing project using renv ...')
+        run_r('renv::restore()', flags=['-e'])
 
-    # run project initialization
-    click.echo('Initializing project using renv ...')
-    os.system(f'cd {path_to_output}/{project_name};Rscript -e "renv::restore()"')
-
+        # Initialize git
+        click.echo('Initializing git inside project...')
+        os.system('git init')
     click.echo('Finished initializing!')
 
 

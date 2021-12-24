@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(
-  name = 'sherpa',
+  name = 'fluke',
   version = '0.1.0',
   py_modules=['fluke'],
   python_requires= '>=3.8',

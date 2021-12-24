@@ -10,11 +10,14 @@
 
 # datasets:
 #   query_dataset1:
-#     type: QueryDataset
-#     script: queries/create_query_dataset1.R
-#     <<: *db1
+#     type: query_dataset
+#     params:
+#       script: queries/create_query_dataset1.R
+#       <<: *db1
 
 #   required_data:
 #     type: csv
-#     location: data/required_data_v1.csv
+#     params:
+#       location: data/required_data_v1.csv
+#       read_fun: write.csv
 

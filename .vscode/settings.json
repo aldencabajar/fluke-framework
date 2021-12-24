@@ -14,7 +14,7 @@
 "r.debugger.timeouts.startup": 10000,
 "python.testing.pytestArgs": [
   "tests",
-  "-s"
+  "-s",
 ],
 "python.testing.unittestEnabled": false,
 "python.testing.pytestEnabled": true

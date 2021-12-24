@@ -11,12 +11,11 @@
         "name": "test_project_create_cli",
         "type": "python",
         "request": "launch",
-        "program": "${workspaceFolder}/sherpa/cli/project_create.py",
-        "python": "${env:HOME}/.virtualenvs/sherpa-dev/bin/python",
+        "program": "${workspaceFolder}/fluke/cli/project_create.py",
+        "python": "${env:HOME}/miniconda3/envs/fluke-dev/bin/python",
+        "cwd": "${env:HOME}",
         "args": [
-          "--pid", "bar",
-          "--dataset", "foobar",
-          "my-new-project"
+          "test-project"
         ]
     },
     {

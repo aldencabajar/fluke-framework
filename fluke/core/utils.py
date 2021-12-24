@@ -11,7 +11,16 @@ import shutil
 import subprocess
 import click
 from cookiecutter.main  import cookiecutter
+from contextlib import contextmanager
 
+@contextmanager
+def cwd(path):
+    oldpwd=os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(oldpwd)
 
 def get_r_version() -> None:
     """determine the R version and print it."""
@@ -65,9 +74,9 @@ def run_r(src: str, flags: List[str] = None) -> None:
     concat_flags = ' '.join(flags) if flags is not None else ''
     try:
         # subprocess.run(f'Rscript {concat_flags} {src}', check=True)
-        subprocess.run(['Rscript', *flags, src], check=True)
+        subprocess.run(['/usr/bin/Rscript', *flags, src], check=True)
     except subprocess.CalledProcessError as err:
-        raise Exception('There seems to be a problem in the query!')
+        raise Exception('There seems to be a problem with the R script/command.')
 
 
 

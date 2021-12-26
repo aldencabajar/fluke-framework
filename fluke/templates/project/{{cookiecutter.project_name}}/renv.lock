@@ -38,6 +38,12 @@
       "Version": "2.4.3",
       "Source": "Repository",
       "Repository": "CRAN"
+    },
+    "readr": {
+      "Package": "readr",
+      "Version": "2.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN"
     }
   }
 }

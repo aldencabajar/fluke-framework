@@ -3,7 +3,7 @@ from distutils.dir_util import copy_tree
 import json
 from pathlib import Path
 import tempfile
-from typing import List, Dict
+from typing import Any, List, Dict, Optional, OrderedDict
 from copy import copy
 import os
 import re
@@ -66,17 +66,24 @@ def _is_rscript(file: Path) -> bool:
     return bool(r_pattern.match(file.name))
 
 
-def run_r(src: str, flags: List[str] = None) -> None:
+def run_r(src: str, flags: Optional[List[str]] = None) -> str:
     """runs an Rscript command
     Args:
     src: Script path or command (commands need to be double quoted)
     """
-    concat_flags = ' '.join(flags) if flags is not None else ''
+    if flags is not None:
+        args = ['/usr/bin/Rscript'] + flags + [src]
+    else:
+        args = ['/usr/bin/Rscript', src]
     try:
-        # subprocess.run(f'Rscript {concat_flags} {src}', check=True)
-        subprocess.run(['/usr/bin/Rscript', *flags, src], check=True)
+        results = subprocess.run(args, check=True, stdout=subprocess.PIPE)
+        return results.stdout.decode('utf-8')
     except subprocess.CalledProcessError as err:
-        raise Exception('There seems to be a problem with the R script/command.')
+        raise Exception(
+            ('There seems to be a problem '
+            'with the R script/command.'
+            )
+        ) from err
 
 
 
@@ -223,3 +230,61 @@ class Cadence:
             'week': datenow.strftime('%Y%m%d')
         }
         return frmt[self.kw]
+
+
+def dict_insert(_dict: Dict, index: int, obj: Any) -> Dict:
+    _tmp = list(copy(_dict).items())
+    _tmp.insert(index, obj)
+    return dict(_tmp)
+
+
+
+def dict_to_r_args(r_args: Dict[str, Optional[Any]]) -> Dict[str, str]:
+    """
+    Converts values to strings (ready for manipulation in R).
+    Existing strings are double-quoted.
+    """
+    new_args: Dict[str, str] = {}
+    for k, v in r_args.items():
+        if isinstance(v, str):
+            new_args[k] = f'"{v}"'
+        else:
+            new_args[k] = str(v)
+
+    return new_args
+
+
+def tar_cmd_generator(
+    target_name: str,
+    fun: Optional[str] = None,
+    expr: Optional[str] = None,
+    fun_args: Optional[Dict[str, str]] = None,
+    tar_args: Optional[Dict[str, str]] = None) -> str:
+
+    if fun is not None and expr is not None:
+        raise Exception('Ony one of `fun` or `expr` should be defined.')
+    kwargs_expr = ''
+    if fun is not None:
+        if fun_args is not None:
+            kwargs_list = []
+            for k, v in fun_args.items():
+                if k != '':
+                    kwargs_list.append(f'{k} = {v}')
+                else:
+                    kwargs_list.append(v)
+            kwargs_expr = ', '.join(kwargs_list)
+
+        tar_cmd_inner = f'{fun}({kwargs_expr})'
+
+    elif expr is not None:
+        tar_cmd_inner = expr
+
+    tar_kwargs_expr = ''
+    if tar_args is not None:
+        tar_kwargs_list = []
+        for k, v in tar_args.items():
+            tar_kwargs_list.append(f'{k} = {v}')
+        tar_kwargs_expr = ', '.join(tar_kwargs_list)
+
+    return f'tar_target({target_name}, {tar_cmd_inner}, {tar_kwargs_expr})'
+

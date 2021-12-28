@@ -368,7 +368,6 @@ class DatasetConfig(TypedDict):
     params: Dict[str, Optional[Any]]
 
 class DatasetsYAMLConfig(TypedDict):
-    datasets_version: str
     datasets: Dict[str, DatasetConfig]
 
 class Datasets(dict):
@@ -380,7 +379,6 @@ class Datasets(dict):
         with self.ds_config_path.open('r', encoding='utf-8') as cfg:
             try:
                 datasets_yaml_config = yaml.safe_load(cfg)
-                self.version = datasets_yaml_config['datasets_version']
                 ds_config =  datasets_yaml_config['datasets']
             except KeyError as error:
                 print('datasets.yaml does not contain `datasets` node.')
@@ -396,11 +394,14 @@ class Datasets(dict):
         self._index = 0
         return self
 
-    def __next__(self):
-        out = self._list[self._index]
-        self._index += 1
+    def __next__(self) -> AbstractDataset:
+        if self._index < len(self._list):
+            out = self._list[self._index]
+            self._index += 1
+            return out
+        else:
+            raise StopIteration
 
-        return out
 
     def __getitem__(self, __k: str) -> AbstractDataset:
         try:
@@ -416,6 +417,14 @@ class Datasets(dict):
     def __len__(self) -> int:
         return len(self._list)
 
+    def query_dataset_exists(self) -> bool:
+        query_ds_cnt = 0
+        for _dataset in self._list:
+            if isinstance(_dataset, QueryDataset):
+                query_ds_cnt += 1
+        return query_ds_cnt > 0
+
+
     def run_targets_cmd(self) -> None:
         """
         generates a `targets` package list of targets
@@ -430,7 +439,7 @@ class Datasets(dict):
         Sys.setenv(TAR_PROJECT = 'datasets')
 
         tar_config_set(
-            store = 'datasets/stores/{self.version}',
+            store = 'datasets/_tar_datasets_store',
             script = 'datasets/tar_script_datasets.R'
         )
 

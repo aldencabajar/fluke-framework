@@ -50,8 +50,8 @@ def find_root_proj() -> Path:
         curr_path = prev_path.parent
         if curr_path == prev_path:
             raise click.UsageError((
-                'Cannot find \'sherpa-config.json\'. '
-                'you must be inside a sherpa project dir.')
+                'Cannot find a .Rproj file in the immediate directory. '
+                'you must be inside a fluke project dir.')
             )
         immediate = curr_path.parent
         rproj_file = f'{str(curr_path.relative_to(immediate))}.Rproj'
@@ -66,18 +66,19 @@ def _is_rscript(file: Path) -> bool:
     return bool(r_pattern.match(file.name))
 
 
-def run_r(src: str, flags: Optional[List[str]] = None) -> str:
+def run_r(src: str, flags: List[str] = [],
+post_flags: List[str] = [], quiet: bool = False) -> str:
     """runs an Rscript command
     Args:
     src: Script path or command (commands need to be double quoted)
     """
-    if flags is not None:
-        args = ['/usr/bin/Rscript'] + flags + [src]
-    else:
-        args = ['/usr/bin/Rscript', src]
+    args = ['/usr/bin/Rscript'] + flags + [src] + post_flags
     try:
-        results = subprocess.run(args, check=True, stdout=subprocess.PIPE)
-        return results.stdout.decode('utf-8')
+        results = subprocess.run(args, check=True, capture_output=quiet)
+        if quiet:
+            return results.stdout.decode('utf-8')
+        else:
+            return ''
     except subprocess.CalledProcessError as err:
         raise Exception(
             ('There seems to be a problem '

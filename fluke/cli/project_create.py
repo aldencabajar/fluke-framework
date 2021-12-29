@@ -3,18 +3,15 @@ import re
 import json
 import string
 from typing import Optional
-from click.exceptions import ClickException
 from click.termui import prompt
 import fluke
-import shutil
 from functools import wraps
 from pathlib import Path
 import click
 from cookiecutter.main import cookiecutter
 from tempfile import TemporaryDirectory
 from distutils.dir_util import copy_tree
-from fluke.core.utils import (
-  get_date_and_format,
+from fluke.utils import (
   get_cookiecutter_cfg,
   cwd,
   run_r
@@ -119,6 +116,3 @@ def create(path: str, pkg_name: Optional[str], project_name: Optional[str]) -> N
         os.system('git init')
     click.echo('Finished initializing!')
 
-
-if __name__ == '__main__':
-    create()

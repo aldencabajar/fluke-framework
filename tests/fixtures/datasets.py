@@ -4,7 +4,7 @@ import pytest
 import shutil
 from pathlib import Path
 from tests.utils import add_datasets_yaml_payload
-from fluke.core.utils import cwd, run_r
+from fluke.utils import cwd, run_r
 
 PROJECT_ID = 'test-bq-project-332617'
 DATASET = 'test_dataset'

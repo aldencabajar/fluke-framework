@@ -1,8 +1,8 @@
 import pytest
 from pathlib import Path
-from fluke.core.config import Datasets
-from fluke.core.config.datasets import BigQueryDataset
-from fluke.core.utils import cwd
+from fluke.config.datasets import Datasets
+from fluke.datasets.query_dataset import BigQueryDataset
+from fluke.utils import cwd
 from .utils import add_datasets_yaml_payload
 from tests.fixtures.datasets import PROJECT_ID, DATASET
 

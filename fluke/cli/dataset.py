@@ -1,9 +1,7 @@
-from typing_extensions import Required
 import click
-from pathlib import Path
-from fluke.core.config import Datasets
-from fluke.core.config.datasets import QueryDataset
-from fluke.core.utils import RemoveRequire
+from fluke.config.datasets import Datasets
+from fluke.datasets.query_dataset import QueryDataset
+from fluke.utils import RemoveRequire
 
 @click.group(invoke_without_command = True)
 @click.pass_context

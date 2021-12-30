@@ -44,6 +44,12 @@
       "Version": "2.1.1",
       "Source": "Repository",
       "Repository": "CRAN"
+    },
+    "reticulate": {
+      "Package": "reticulate",
+      "Version": "1.22",
+      "Source": "Repository",
+      "Repository": "CRAN"
     }
   }
 }

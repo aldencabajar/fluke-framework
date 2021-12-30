@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 import json
 import string
@@ -87,6 +88,7 @@ def create(path: str, pkg_name: Optional[str], project_name: Optional[str]) -> N
     # add needed settings to config file
     config['project_name'] = project_name
     config['pkg_name'] = pkg_name
+    config['python_path'] = sys.executable
 
     # create a tempdir to copy config and relevant template files
     with TemporaryDirectory(prefix='fluke') as temp_dir:

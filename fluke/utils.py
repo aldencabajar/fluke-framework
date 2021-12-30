@@ -287,5 +287,5 @@ def tar_cmd_generator(
             tar_kwargs_list.append(f'{k} = {v}')
         tar_kwargs_expr = ', '.join(tar_kwargs_list)
 
-    return f'tar_target({target_name}, {tar_cmd_inner}, {tar_kwargs_expr})'
+    return f'targets::tar_target({target_name}, {tar_cmd_inner}, {tar_kwargs_expr})'
 

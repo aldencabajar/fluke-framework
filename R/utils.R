@@ -30,11 +30,12 @@ get_project_config <- function() {
   return(proj_config)
 }
 
-#' @title Assemble python env info for withr
+#' @title setup a python env to run reticulate.
+#' @param ... Additional argumentsa for \code{withr::with_envvar}
 #' @export
-python_env <- function() {
+python_env <- function(...) {
   config  <- get_project_config()
   envvar <- c("RETICULATE_PYTHON" = config$python_path)
-  return(envvar)
+  withr::with_envvar(new = envvar, ...)
 }
 

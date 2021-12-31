@@ -16,7 +16,7 @@ def pytest_configure():
     pytest.project_name = None
 
 pytest_plugins = [
-    'tests.fixtures.datasets',
+    'tests.pytests.fixtures.datasets',
 ]
 
 

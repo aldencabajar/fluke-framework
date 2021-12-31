@@ -36,7 +36,7 @@ class DatasetConfig(TypedDict):
 class DatasetsYAMLConfig(TypedDict):
     datasets: Dict[str, DatasetConfig]
 
-class Datasets(dict):
+class Datasets:
     """Class to be instantiated to encapsulate datasets info."""
     def __init__(self):
         datasets_yaml_config: DatasetsYAMLConfig
@@ -89,6 +89,21 @@ class Datasets(dict):
             if isinstance(_dataset, QueryDataset):
                 query_ds_cnt += 1
         return query_ds_cnt > 0
+
+    def get_dataset_by_loc(self, loc: Union[Path, str]) -> AbstractDataset:
+        """using the dataset's location, get the corresponding dataset."""
+        if isinstance(loc, str):
+            loc = Path(loc)
+        for ds in self._list:
+            if isinstance(ds, QueryDataset):
+                _path = ds.params.file_path
+            else:
+                _path = ds.params.location
+            if _path == loc:
+                return ds
+        raise Exception(
+            (f'No dataset found with location: {str(loc)}')
+        )
 
 
     def run_targets_cmd(self) -> None:

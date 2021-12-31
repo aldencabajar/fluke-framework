@@ -41,7 +41,7 @@ class CSVDataset(AbstractDataset):
     def __init__(self, name: str, params: Dict[str, Optional[Any]]) -> None:
         super().__init__(name, params)
 
-    def _set_params(self, params: Dict[str, Optional[Any]]) -> None:
+    def _set_params(self, params: Dict[str, Any]) -> None:
         _params = self._param_struct(**params)
         self._params = _params
 

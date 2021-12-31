@@ -11,7 +11,7 @@ from abc import abstractmethod
 class QueryParams(AbstractParam):
     script: Optional[str] = None
     query: Optional[str] = None
-    version: Optional[str] = ''
+    version: str  = ''
     table: Optional[str] = None
     migrate_fun: Optional[str] = 'bigrquery::bq_table_download'
     read_fun: Optional[str] = 'readRDS'
@@ -43,6 +43,11 @@ class QueryParams(AbstractParam):
     @property
     @abstractmethod
     def location(self) -> Path:
+        ...
+
+    @property
+    @abstractmethod
+    def file_path(self) -> Path:
         ...
 
     def _check_params(self):

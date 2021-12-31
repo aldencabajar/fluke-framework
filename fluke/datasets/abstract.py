@@ -1,5 +1,7 @@
 """Abstract methods for Dataset-related Classes"""
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Type, TypedDict, Union
 
 
@@ -23,7 +25,7 @@ class AbstractDataset(ABC):
         ...
 
     @abstractmethod
-    def _set_params(self, params: Dict[str, Optional[Any]]) -> None:
+    def _set_params(self, params: Dict[str, Any]) -> None:
         """abstract method to set params for instance."""
         ...
 

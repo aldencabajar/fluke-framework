@@ -31,6 +31,10 @@ class BigQueryParams(QueryParams):
     def location(self) -> Path:
         return self._location
 
+    @property
+    def file_path(self) -> Path:
+        return Path(self._location, self.version)
+
     def _check_params(self) -> None:
         super()._check_params()
         required_attrs = ['project_id', 'dataset']
@@ -68,7 +72,7 @@ class BigQueryDataset(QueryDataset):
     def __init__(self, name: str, params: Dict[str, Optional[Any]]) -> None:
         super().__init__(name, params)
 
-    def _set_params(self, params: Dict[str, Optional[Any]]) -> None:
+    def _set_params(self, params: Dict[str, Any]) -> None:
         self._params = self._param_struct(**params)
 
     def tar_cmd(self) -> str:
@@ -132,12 +136,9 @@ class BigQueryDataset(QueryDataset):
             if p.table is not None:
                 migrate_args_r.insert(0, sym_wrap(p.table))
 
-        if p.version is not None:
-            file_path = Path(p.location, p.version)
-
         cmd = f"""
             downloaded <- {p.migrate_fun}({all_args_expr})
-            saveRDS(downloaded, "{file_path}")
+            saveRDS(downloaded, "{p.file_path}")
         """
 
         run_r(cmd, ['-e'], quiet= True)

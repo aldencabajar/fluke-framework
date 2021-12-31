@@ -188,6 +188,7 @@ class RemoveRequire(click.Argument):
 
         return super().handle_parse_result(ctx, opts, args)
 
+
 class RemoveRequireOpt(click.Option):
     """Option class version for RemoveRequire"""
     def __init__(self, *args, **kwargs):
@@ -237,7 +238,6 @@ def dict_insert(_dict: Dict, index: int, obj: Any) -> Dict:
     _tmp = list(copy(_dict).items())
     _tmp.insert(index, obj)
     return dict(_tmp)
-
 
 
 def dict_to_r_args(r_args: Dict[str, Optional[Any]]) -> Dict[str, str]:

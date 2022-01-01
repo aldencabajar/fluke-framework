@@ -13,7 +13,8 @@
 "r.rpath.linux": "/usr/bin/R",
 "r.debugger.timeouts.startup": 10000,
 "python.testing.pytestArgs": [
-  "tests/pytests"
+  "-s",
+  "tests/pytests",
 ],
 "python.testing.unittestEnabled": false,
 "python.testing.pytestEnabled": true

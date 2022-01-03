@@ -1,3 +1,5 @@
 ^renv$
 ^renv\.lock$
 ^requirements\.txt$
+^fluke$
+^tests$

@@ -75,22 +75,22 @@ revert_envvars <- function(old_envvar) {
 }
 
 expect_target_exists <- function(target_name) {
-    tar_quo <- rlang::enquo(target_name)
-    act <- quasi_label(tar_quo, arg = "target_name")
+  tar_quo <- rlang::enquo(target_name)
+  act <- quasi_label(tar_quo, arg = "target_name")
 
-    path_to_object <- file.path(
-      targets::tar_config_get("store"),
-      "objects",
-      rlang::quo_name(tar_quo)
-    )
+  path_to_object <- file.path(
+    targets::tar_config_get("store"),
+    "objects",
+    rlang::quo_name(tar_quo)
+  )
 
-    expect(
-      fs::file_exists(path_to_object),
-      sprintf("%s does not exists in `targets` store.", act$lab)
-    )
+  expect(
+    fs::file_exists(path_to_object),
+    sprintf("%s does not exists in `targets` store.", act$lab)
+  )
 
-    # 3. Invisibly return the value
-    invisible(act$val)
+  # 3. Invisibly return the value
+  invisible(act$val)
 }
 
 

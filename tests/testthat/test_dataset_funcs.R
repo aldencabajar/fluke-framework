@@ -28,14 +28,9 @@ testthat::test_that("`read_dataset` works as expected.", {
   )
 
   # run pipeline
-  targets::tar_make()
-  expect_success(expect_target_exists(read_data_object))
-  # print(fs::dir_ls("_targets/"))
-
-  # path to dataset object inside `_targets` dir.
-  # ds_path_in_tar <- file.path("_targets", "objects")
-  # expect_true(fs::file_exists())
-
-
+  local({
+    targets::tar_make()
+    expect_silent(targets::tar_load(read_data_object))
+    expect_equal(read.csv(path_to_ds), read_data_object)
+  })
 })
-

@@ -11,9 +11,9 @@ clean_test:
 r_pkg_install:
 	cd $(TEST_PROJECT_NAME); Rscript -e "devtools::install('../', quick = TRUE)"
 
-build_and_install:
+document_and_build:
 	Rscript -e "devtools::document()"
-	Rscript -e "devtools::install(quick=TRUE)"
+	Rscript -e "devtools::build(path='.')"
 
 # R UNIT TESTING
 test_r_pkg:

@@ -1,3 +1,6 @@
 # do not edit by hand
 datasets:
   script: datasets/tar_script_datasets.R
+
+pipelines:
+  script: pipelines/_targets_pipelines.R

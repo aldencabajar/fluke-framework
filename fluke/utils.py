@@ -8,6 +8,7 @@ from copy import copy
 import os
 import re
 import shutil
+import yaml
 import subprocess
 import click
 from cookiecutter.main  import cookiecutter
@@ -58,6 +59,14 @@ def find_root_proj() -> Path:
 
 
     return curr_path.resolve()
+
+
+def get_project_config() -> Dict[str, str]:
+    path_to_config = Path(find_root_proj(), 'config', 'project.yaml')
+    with path_to_config.open() as _file:
+        conf: Dict[str, str] = yaml.safe_load(_file)
+
+    return conf
 
 
 def _is_rscript(file: Path) -> bool:

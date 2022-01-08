@@ -3,3 +3,4 @@
 ^requirements\.txt$
 ^fluke$
 ^tests$
+^test-project$

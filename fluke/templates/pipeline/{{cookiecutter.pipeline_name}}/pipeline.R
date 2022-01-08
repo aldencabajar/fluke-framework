@@ -1,5 +1,6 @@
 ##  CONFIGURATION (DO NOT EDIT BY HAND!)
 library(targets)
+library({{cookiecutter.pkg_name}})
 path_to_pipeline <- here::here("pipelines", "{{cookiecutter.pipeline_name}}")
 config <- file.path(path_to_pipeline, "pipeline.yml")
 
@@ -8,3 +9,4 @@ config <- file.path(path_to_pipeline, "pipeline.yml")
 pipeline <- yaml::yaml.load_file(config)
 
 # START TARGETS PIPELINE HERE ----------------------------
+

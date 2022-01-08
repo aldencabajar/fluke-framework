@@ -17,4 +17,4 @@ document_and_build:
 
 # R UNIT TESTING
 test_r_pkg:
-	cd tests;Rscript -e "testthat::test_dir('testthat')"
+	Rscript -e "testthat::test_dir('tests/testthat')"

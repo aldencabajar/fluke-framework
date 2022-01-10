@@ -2,10 +2,14 @@
 % Please edit documentation in R/pipeline.R
 \name{prepare_targets.pipelines}
 \alias{prepare_targets.pipelines}
-\title{Create a}
+\title{Prepares pipelines for eventual \code{targets::tar_make}.}
 \usage{
 \method{prepare_targets}{pipelines}(pipelines)
 }
+\value{
+A list of \code{tar_target} or \code{tar_target_raw}
+objects from the \code{targets} package.
+}
 \description{
-Create a
+Prepares pipelines for eventual \code{targets::tar_make}.
 }

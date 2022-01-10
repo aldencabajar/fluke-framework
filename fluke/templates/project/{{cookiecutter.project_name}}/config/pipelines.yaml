@@ -1,0 +1,9 @@
+# Configuration file for pipelines. To define pipeline-level params,
+# add <name_of_pipeline> as an additional node and add relevant params accordingly.
+
+# declare params as required in `tar_config_set`
+pipelines:
+  version: null
+  workers: null
+  reporter_make: null
+  reporter_outdated: null

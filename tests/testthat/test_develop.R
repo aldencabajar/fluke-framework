@@ -17,25 +17,28 @@ test_func <- function(foo) {
 
 ## TESTS
 test_that("package is installed successfully inside fluke project.",  {
-  pkg_skeleton()
-  fluke::install()
-  expect_true("fluke" %in% row.names(installed.packages()))
+  local({
+    pkg_skeleton()
+    fluke::install()
+    expect_true("fluke" %in% row.names(installed.packages()))
+  })
 
 })
 
 test_that("fluke::document writes .Rd files within fluke proj package dir.", {
-  pkg_skeleton()
-  write_pkg_func(func_script, "foo.R")
-  fluke::document()
-  expect_success(expect_document_exists("test_func"))
-
+  local({
+    pkg_skeleton()
+    write_pkg_func(func_script, "foo.R")
+    fluke::document()
+    expect_success(expect_document_exists("test_func"))
+  })
 })
 
 test_that("functions can be used after doing `fluke::update_package`.", {
-  pkg_skeleton()
-  write_pkg_func(func_script, "foo.R")
-  fluke::update_package()
   local({
+    pkg_skeleton()
+    write_pkg_func(func_script, "foo.R")
+    fluke::update_package()
     library(testproj)
     expect_equal(test_func("foo"), "foo")
   })

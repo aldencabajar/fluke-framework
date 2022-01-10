@@ -8,7 +8,7 @@
 #' @export
 pipeline_script_path <- function(ppl) {
   full_dir_path <- here::here("pipelines", ppl)
-  pipeline_r_exists <- "pipeline.R" %in% fs::dir_ls(full_dir_path)
+  pipeline_r_exists <- "pipeline.R" %in% basename(fs::dir_ls(full_dir_path))
 
   if (pipeline_r_exists) {
     return(
@@ -26,12 +26,11 @@ pipeline_script_path <- function(ppl) {
 #' @export
 get_pipelines <- function() {
   path_to_pipelines <- here::here("pipelines")
-  pipelines <- unlist(
+  pipelines <-
     fs::dir_map(
-    path_to_pipelines, fun = pipeline_script_path, type = "directory"
-    )
+    path_to_pipelines, fun = function(x) pipeline_script_path(basename(x)),
+    type = "directory"
   )
-
   if (is.null(pipelines)) {
     stop("No pipelines exists! Consider creating one using
     `fluke pipeline create`")
@@ -53,14 +52,40 @@ prepare_targets <- function(x, ...) {
 #' objects from the `targets` package.
 #' @export
 prepare_targets.pipelines <- function(pipelines) {
-  # create a new environment
-  tar_env <- new.env()
+  lapply(pipelines, function(ppl) source(ppl$path)$value)
 
-  # source to new environment
-  lapply(pipelines, function(ppl) source(ppl$path, local = tar_env))
+}
 
-  # return as list for `tar_make`
-  return(as.list(tar_env))
+#' @title get pipelines config
+#' @export
+pipelines_config <- function() {
+  ppl_config_path <- rprojroot::find_rstudio_root_file(
+    "config", "pipelines.yaml"
+  )
+  config <- yaml::read_yaml(ppl_config_path)
 
+  if (is.null(config$pipelines$version)) {
+    warning("No version found. Consider defining pipelines version in `config/pipelines.yaml`.")
+  }
+  return(config)
+
+}
+
+
+#' @export
+setup_pipelines <- function() {
+  Sys.setenv(TAR_CONFIG = "config/targets.yaml")
+  Sys.setenv(TAR_PROJECT = "main")
+
+  config <- pipelines_config()
+  ppl <- config$pipelines
+  #derive pipelines store
+  if (!is.null(ppl$version)) {
+    ppl$store <- file.path("pipelines", "store", ppl$version)
+  }
+  ppl$version <- NULL
+  ppl$script <- "pipelines/targets-pipelines.R"
+
+  do.call(targets::tar_config_set, ppl)
 
 }

@@ -6,6 +6,9 @@
 \usage{
 get_pipelines()
 }
+\value{
+A \code{pipelines} object.
+}
 \description{
 get pipelines created under pipelines/
 }

@@ -80,21 +80,9 @@ def create(deps: PipelineDependencies, name: str) -> None:
         deps.project_pipeline_dir,
         _config
     )
-    # set config in _targets.yaml
-    targets_store = Path(deps.project_pipeline_dir, name, '_targets_store')
-    main_src_path = Path(deps.project_pipeline_dir, name, 'main.R')
-    targets_pkg_set = f"""
-    targets::tar_config_set(
-        script = {sym_wrap(str(main_src_path))},
-        store =  {sym_wrap(str(targets_store))},
-        config = {sym_wrap(str(deps.targets_yaml_path))},
-        project = {sym_wrap(name)}
-    )
-    """
-    run_r(targets_pkg_set, ['-e'])
     click.echo((
         f'\ncreated `{str(path_to_pipeline)}`'
-        f'\n add pipeline `{name}` to {str(deps.targets_yaml_path)}\n'
+        f'\n add pipeline parameters with node `{name}` to `config/pipelines.yaml`'
     ))
 
 

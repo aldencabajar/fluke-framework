@@ -96,5 +96,14 @@ expect_target_exists <- function(target_name) {
   invisible(act$val)
 }
 
+#' @title Test if a directory exists within the project
+#' @param  dir_path String. Path to directory.
+expect_dir_exists <- function(dir_path) {
+  expect(
+    fs::dir_exists(dir_path),
+    sprintf("%s directory does not exist.", dir_path)
+  )
+}
+
 
 

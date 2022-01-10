@@ -4,7 +4,6 @@
 
 Think of Ruby-on-Rails, but for making data scientists' lives easier in R!
 
-
 ## Developer setup
 To recreate the environment used for package dev, run:
 

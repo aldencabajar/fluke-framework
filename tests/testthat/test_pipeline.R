@@ -23,12 +23,22 @@ test_that("all pipelines run with a single `tar_make` call.", {
   write_to_pipeline_script("bar", {
     list(tar_target(proc2, proc + 1))
   })
-
   # setup environment
   fluke::setup_pipelines()
   fluke::install()
   # run `tar_make`
   targets::tar_make()
+  expect_success(expect_dir_exists("pipelines/store/test"))
+})
 
-  expect_dir_exists("pipelines/store/test")
+
+
+test_that("params for a specific pipeline can be
+used when defined in pipeline.yaml.", {
+  config <- list(
+    pipelines = list(version = "test"),
+    data_process = list(a = 1, b = 2)
+  )
+  set_pipelines_config(config)
+
 })

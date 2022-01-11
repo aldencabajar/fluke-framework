@@ -7,7 +7,7 @@
 #' @return A list of the name of pipeline and  the full path of the pipeline.
 #' @export
 pipeline_script_path <- function(ppl) {
-  full_dir_path <- here::here("pipelines", ppl)
+  full_dir_path <- rprojroot::find_rstudio_root_file("pipelines", ppl)
   pipeline_r_exists <- "pipeline.R" %in% basename(fs::dir_ls(full_dir_path))
 
   if (pipeline_r_exists) {
@@ -56,9 +56,10 @@ prepare_targets.pipelines <- function(pipelines) {
 
 }
 
-#' @title get pipelines config
+#' @title get pipelines config, or specific config for pipeline
+#' @param name name of pipeline. if NULL, returns whole pipelines config.
 #' @export
-pipelines_config <- function() {
+pipelines_config <- function(name = NULL) {
   ppl_config_path <- rprojroot::find_rstudio_root_file(
     "config", "pipelines.yaml"
   )
@@ -67,6 +68,16 @@ pipelines_config <- function() {
   if (is.null(config$pipelines$version)) {
     warning("No version found. Consider defining pipelines version in `config/pipelines.yaml`.")
   }
+  if (!is.null(name)) {
+    tryCatch(
+      return(config[[name]]),
+      error = function(e) {
+        message(sprintf("no params set for pipeline '%s'.", name))
+        return(NULL)
+      }
+    )
+  }
+
   return(config)
 
 }

@@ -27,7 +27,7 @@ create_pipeline <- function(name, env = parent.frame()) {
 
   withr::defer({
     # delete pipeline folder
-    fs::dir_delete(here::here("pipelines", name))
+    fs::dir_delete(file.path("pipelines", name))
     # restore previous config
     yaml::write_yaml(prev_config, "config/pipelines.yaml")
   },
@@ -49,7 +49,7 @@ write_to_pipeline_script <- function(
 
   # append to pipeline.R or create a new file within the pipeline
   if (is.null(new_file)) {
-    write(expr_str, ppl$path)
+    write(expr_str, ppl$path, append = TRUE)
   } else {
     new_file_path <- file.path(ppl_dir, new_file)
     write(expr_str, new_file_path)

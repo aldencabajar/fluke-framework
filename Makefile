@@ -1,6 +1,6 @@
 TEST_PROJECT_NAME=test-project
 Rscript=/usr/bin/Rscript
-TEST_PKG=test_package
+TEST_PKG=testpkg
 .PHONY: r_pkg_install
 curr_wd := $(shell pwd)
 

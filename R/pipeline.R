@@ -25,12 +25,14 @@ pipeline_script_path <- function(ppl) {
 #' @return A \code{pipelines} object.
 #' @export
 get_pipelines <- function() {
-  path_to_pipelines <- here::here("pipelines")
+  path_to_pipelines <- rprojroot::find_rstudio_root_file("pipelines")
   pipelines <-
     fs::dir_map(
     path_to_pipelines, fun = function(x) pipeline_script_path(basename(x)),
     type = "directory"
   )
+  # remove nulls
+  pipelines <- pipelines[lengths(pipelines) != 0]
   if (is.null(pipelines)) {
     stop("No pipelines exists! Consider creating one using
     `fluke pipeline create`")

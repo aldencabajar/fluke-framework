@@ -45,12 +45,11 @@ def _project_cleanup(func):
 
 def _is_pkgname_valid(pkg_name: str) -> bool:
     # valid characters
-    _chars = string.ascii_lowercase + '_'
+    _chars = string.ascii_lowercase
     for chr in pkg_name:
         if chr not in _chars:
-            raise Exception(
-                ('Package name must only contain '
-                'lowercase letters and `_`.'
+            raise click.UsageError(
+                ('Package name must only contain lowercase letters.'
                 )
             )
     return True

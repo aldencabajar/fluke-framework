@@ -18,7 +18,6 @@ create_pipeline <- function(name, env = parent.frame()) {
 
   # write  pipelines.yml with version filled-in
   curr_config <- prev_config
-  curr_config$store <- "test"
   yaml::write_yaml(curr_config, "config/pipelines.yaml")
 
   args <- c("pipeline", "create", name)
@@ -43,7 +42,6 @@ write_to_pipeline_script <- function(
   expr_str <- deparse(substitute(expr))
   ppl <- fluke::pipeline_script_path(pipeline)
   ppl_dir <- dirname(ppl$path)
-
   # get old lines from script
   old_lines <- readLines(ppl$path)
 

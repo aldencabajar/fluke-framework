@@ -93,26 +93,21 @@ def get_pipeline_names_click(ctx, args, incomplete):
     return [k for k in ppl_path_str if k.startswith(incomplete)]
 
 @pipeline.command('run')
-@click.option('--workers', type=int, default=1, required=False)
+@click.option('--parallel', 'parallel', is_flag=True)
+@click.option('--target', required=False, default='')
 @click.argument('name', required=True, shell_complete = get_pipeline_names_click)
 @click.pass_obj
-def run(deps: PipelineDependencies, name: str, workers: int) -> None:
+def run(deps: PipelineDependencies, name: str, target:str, parallel: bool) -> None:
     """Run the `targets` make for pipeline."""
 
     if not Path(deps.project_pipeline_dir, name).exists():
-        raise Exception(
+        raise click.UsageError(
             (f'Pipeline `{name}` does not exist. '
             'Consider creating one using `pipeline create.`')
         )
+    make_func = 'targets::tar_make'
+    if parallel:
+        make_func = 'targets::tar_make_future'
+    tar_make_cmd = f'{make_func}({target})'
 
-    if workers > 1:
-        tar_make_cmd = 'targets::tar_make_future()'
-    else:
-        tar_make_cmd = 'targets::tar_make()'
-
-    run_cmd = f"""
-    Sys.setenv(TAR_PROJECT = {sym_wrap(name)})
-    Sys.setenv(TAR_CONFIG = {sym_wrap(str(deps.targets_yaml_path))})
-    {tar_make_cmd}
-    """
-    run_r(run_cmd, ['-e'])
+    run_r(tar_make_cmd, ['-e'])

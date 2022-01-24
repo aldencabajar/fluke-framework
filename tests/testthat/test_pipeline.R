@@ -2,6 +2,8 @@
 
 ## declare fixtures
 local_project_dir()
+version_name <- "test"
+store_path <- file.path("pipelines", "store")
 
 ## Tests
 test_that("all pipelines run with a single `tar_make` call.", {
@@ -28,7 +30,12 @@ test_that("all pipelines run with a single `tar_make` call.", {
   fluke::install()
   # run `tar_make`
   targets::tar_make()
-  expect_success(expect_dir_exists("pipelines/store/test"))
+  expect_success(expect_dir_exists(file.path(store_path, version_name)))
+  withr::defer({
+    fs::dir_delete(
+      file.path(store_path, version_name)
+    )
+  })
 })
 
 
@@ -40,5 +47,23 @@ used when defined in pipeline.yaml.", {
     data_process = list(a = 1, b = 2)
   )
   set_pipelines_config(config)
+  create_pipeline("data_process")
+  write_to_pipeline_script("data_process", {
+    list(
+      tar_target(data1, data.frame(d = c(1, 2))),
+      tar_target(proc, data1$d + data_process$a)
+    )
+  })
+
+  fluke::setup_pipelines()
+  fluke::install()
+  targets::tar_make()
+
+  expect_success(expect_dir_exists(file.path(store_path, version_name)))
+  withr::defer({
+    fs::dir_delete(
+      file.path(store_path, version_name)
+    )
+  })
 
 })

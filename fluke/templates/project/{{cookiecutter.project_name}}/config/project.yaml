@@ -1,3 +1,4 @@
+# project wide settings that are invoked and called using .Rprofile.
 project_name: {{cookiecutter.project_name}}
 pkg_name: {{cookiecutter.pkg_name}}
 python_path: {{cookiecutter.python_path}}

@@ -142,3 +142,5 @@ cython_debug/
 test-project/
 
 # R PACKAGE IGNORED FILES ==========================
+.Renviron
+scratch/

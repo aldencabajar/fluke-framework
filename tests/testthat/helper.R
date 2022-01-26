@@ -1,5 +1,5 @@
 PROJECT_NAME <- "my-test-project"
-PKG_NAME <- "my_test_project"
+PKG_NAME <- "testproj"
 TEST_DIR <- "~/test-fluke-pkg"
 
 
@@ -14,6 +14,8 @@ local_project_dir <- function(dir = tempfile(), env = parent.frame()) {
     #change working directory to project path
     setwd(proj)
   })
+
+  renv::load()
 
   withr::defer({
     revert_envvars(old_envvars)
@@ -66,6 +68,7 @@ csv_dataset <- function(dataset, name, env = parent.frame()) {
 }
 
 
+#'@title reverts environment variables to a previous state
 revert_envvars <- function(old_envvar) {
   # detect envvars not in original envvar
   old_env_names <- names(old_envvar)
@@ -91,6 +94,15 @@ expect_target_exists <- function(target_name) {
 
   # 3. Invisibly return the value
   invisible(act$val)
+}
+
+#' @title Test if a directory exists within the project
+#' @param  dir_path String. Path to directory.
+expect_dir_exists <- function(dir_path) {
+  expect(
+    fs::dir_exists(dir_path),
+    sprintf("%s directory does not exist.", dir_path)
+  )
 }
 
 

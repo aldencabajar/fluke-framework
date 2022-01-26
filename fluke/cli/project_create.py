@@ -111,7 +111,13 @@ def create(path: str, pkg_name: Optional[str], project_name: Optional[str]) -> N
     with cwd(path_to_project):
         # run project initialization
         click.echo('Initializing project using renv ...')
-        run_r('renv::restore()', flags=['-e'])
+        run_r(
+            """
+            source('renv/activate.R')
+            renv::restore()
+            """,
+            flags=['--vanilla', '-e']
+        )
 
         # Initialize git
         click.echo('Initializing git inside project...')

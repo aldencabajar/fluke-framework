@@ -4,7 +4,12 @@
 \alias{prepare_targets.pipelines}
 \title{Prepares pipelines for eventual \code{targets::tar_make}.}
 \usage{
-\method{prepare_targets}{pipelines}(pipelines)
+\method{prepare_targets}{pipelines}(pipelines, name = NULL)
+}
+\arguments{
+\item{pipelines}{A pipelines object.}
+
+\item{name}{The name of a specific pipeline.}
 }
 \value{
 A list of \code{tar_target} or \code{tar_target_raw}

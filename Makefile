@@ -20,10 +20,11 @@ test-proj-clean:
 # PACKAGE DEVELOPMENT
 PKG_VERSION = 0.0.0.9000
 build_path := $(curr_wd)/fluke/templates/project/{{cookiecutter.project_name}}/renv/local/
-$(info BUILD=$(build))
+$(info BUILD=$(build_path))
 
 build_pkg := $(build_path)/fluke_$(PKG_VERSION).tar.gz
-.PHONY: build_pkg
+r_pkg: $(build_pkg)
+.PHONY: r_pkg
 
 $(build_pkg): $(shell find R -type f)
 	$(Rscript) -e "devtools::document()"
@@ -39,7 +40,6 @@ test-r-pkg: $(build_pkg)
 
 ## declare path to test file
 test_file_path := $(curr_wd)/tests/testthat/test_$(file).R
-$(info $$test_file = $(test_file_path))
 
 test-file: $(build_pkg)
 	$(Rscript) -e "testthat::test_file('$(test_file_path)')"

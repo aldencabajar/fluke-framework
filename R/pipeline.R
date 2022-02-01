@@ -2,7 +2,7 @@
 # Main backend to be used is the `targets` pacakge in R.
 
 
-#' @title identifies if a dirname is ane xisting pipeline path.
+#' @title identifies if a dirname is an existing pipeline path.
 #' @param ppl A String. name of pipeline
 #' @return A list of the name of pipeline and  the full path of the pipeline.
 #' @export
@@ -50,13 +50,24 @@ prepare_targets <- function(x, ...) {
 
 
 #' @title Prepares pipelines for eventual `targets::tar_make`.
+#' @param  pipelines A pipelines object.
+#' @param name name of a specific pipelines.
 #' @return A list of `tar_target` or `tar_target_raw`
 #' objects from the `targets` package.
 #' @export
-prepare_targets.pipelines <- function(pipelines) {
-  lapply(pipelines, function(ppl) source(ppl$path)$value)
-
+prepare_targets.pipelines <- function(pipelines, name = NULL) {
+  if (is.null(name)) {
+    return(
+      lapply(pipelines, function(ppl) source(ppl$path)$value)
+    )
+  } else {
+    .bool <- name %in% sapply(pipelines, function(x) x$name)
+    assertthat::assert_that(sum(.bool) == 1)
+    ppl <- pipelines[[which(.bool)]]$path
+    return(source(ppl)$value)
+  }
 }
+
 
 #' @title get pipelines config, or specific config for pipeline
 #' @param name name of pipeline. if NULL, returns whole pipelines config.

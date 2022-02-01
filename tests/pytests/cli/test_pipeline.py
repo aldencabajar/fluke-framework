@@ -1,3 +1,4 @@
+from multiprocessing.dummy.connection import Pipe
 from shutil import ExecError
 from subprocess import PIPE
 from typing_extensions import TypedDict
@@ -38,7 +39,16 @@ def test_pipeline_create(pipeline_fixture: Result, project_directory: Path) -> N
     pipeline_path = Path(project_directory, 'pipelines', PIPELINE_NAME)
     assert pipeline_path.exists()
 
-def test_pipeline_run():
-    ...
+TEST_SCRIPT = """
+list(
+    tar_target(data1, data.frame(a = c(1,2), b= c(3,4))),
+    tar_target(proc, data1$a + 1)
+)
+"""
+@pytest.mark.parametrize("pipeline_fixture",
+[PipelineFixtureParam(scripts={Path('pipeline.R'): TEST_SCRIPT}), ],
+indirect=True)
+def test_pipeline_run_all(cli: CliRunner, pipeline_fixture: Result):
+    results = cli.invoke(pipeline, ['run'])
 
 

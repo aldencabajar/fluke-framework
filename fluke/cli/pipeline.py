@@ -4,6 +4,7 @@ from typing import List
 import click
 import fluke
 from fluke.utils import (
+    RemoveRequire,
     find_root_proj,
     _create_dir_using_cookiecutter,
     get_project_config,
@@ -95,7 +96,7 @@ def get_pipeline_names_click(ctx, args, incomplete):
 @pipeline.command('run')
 @click.option('--parallel', 'parallel', is_flag=True)
 @click.option('--target', required=False, default='')
-@click.argument('name', required=True, shell_complete = get_pipeline_names_click)
+@click.option('--name', required=False)
 @click.pass_obj
 def run(deps: PipelineDependencies, name: str, target:str, parallel: bool) -> None:
     """Run the `targets` make for pipeline."""
@@ -108,6 +109,13 @@ def run(deps: PipelineDependencies, name: str, target:str, parallel: bool) -> No
     make_func = 'targets::tar_make'
     if parallel:
         make_func = 'targets::tar_make_future'
-    tar_make_cmd = f'{make_func}({target})'
+    if name is not None and target == '':
+        target = f"get_targets(prepare_targets(pipelines, name = '{name}'), names = TRUE)"
+
+    tar_make_cmd =f"""
+    library(fluke)
+    pipelines <- get_pipelines()
+    {make_func}({target})
+    """
 
     run_r(tar_make_cmd, ['-e'])

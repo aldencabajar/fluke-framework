@@ -10,7 +10,7 @@ get_targets <- function(targets_list, regexp = NULL, names = FALSE) {
   tar_list_unlist <- unlist(targets_list)
   .names <- sapply(tar_list_unlist, function(x) x$settings$name)
   bools <- !vector(length = length(tar_list_unlist))
-   if (!is.null(pattern)) {
+   if (!is.null(regexp)) {
      bools <- stringr::str_detect(.names, regexp)
    }
    if (!names) {

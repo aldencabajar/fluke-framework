@@ -114,6 +114,7 @@ def create(path: str, pkg_name: Optional[str], project_name: Optional[str]) -> N
             """
             source('renv/activate.R')
             renv::restore()
+            fluke::install()
             """,
             flags=['--vanilla', '-e']
         )

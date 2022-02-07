@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 import click
 import fluke
 from fluke.utils import (
@@ -98,18 +98,20 @@ def get_pipeline_names_click(ctx, args, incomplete):
 @click.option('--target', required=False, default='')
 @click.option('--name', required=False)
 @click.pass_obj
-def run(deps: PipelineDependencies, name: str, target:str, parallel: bool) -> None:
+def run(deps: PipelineDependencies, name: Optional[str],
+target: Optional[str], parallel: bool) -> None:
     """Run the `targets` make for pipeline."""
 
-    if not Path(deps.project_pipeline_dir, name).exists():
-        raise click.UsageError(
-            (f'Pipeline `{name}` does not exist. '
-            'Consider creating one using `pipeline create.`')
-        )
     make_func = 'targets::tar_make'
     if parallel:
         make_func = 'targets::tar_make_future'
+
     if name is not None and target == '':
+        if not Path(deps.project_pipeline_dir, name).exists():
+            raise click.UsageError(
+                (f'Pipeline `{name}` does not exist. '
+                'Consider creating one using `pipeline create.`')
+            )
         target = f"get_targets(prepare_targets(pipelines, name = '{name}'), names = TRUE)"
 
     tar_make_cmd =f"""

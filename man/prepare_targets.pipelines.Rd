@@ -9,7 +9,7 @@
 \arguments{
 \item{pipelines}{A pipelines object.}
 
-\item{name}{The name of a specific pipeline.}
+\item{name}{name of a specific pipelines.}
 }
 \value{
 A list of \code{tar_target} or \code{tar_target_raw}

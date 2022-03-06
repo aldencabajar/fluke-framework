@@ -10,7 +10,7 @@ from click.testing import CliRunner
 from fluke.cli.project_create import create
 
 PROJECT_NAME = 'my-test-project'
-PKG_NAME = 'my_test_project'
+PKG_NAME = 'testproj'
 
 def pytest_configure():
     pytest.project_name = None
@@ -31,7 +31,8 @@ def project_directory(tmp_path_factory: TempPathFactory) -> Generator[Path, None
             PROJECT_NAME
         ]
         runner = CliRunner()
-        runner.invoke(create, args)
+        results = runner.invoke(create, args)
+        assert results.exit_code == 0
         path_to_proj = Path(_dir, PROJECT_NAME)
         os.chdir(path_to_proj)
         yield path_to_proj

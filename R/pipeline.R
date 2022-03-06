@@ -2,12 +2,12 @@
 # Main backend to be used is the `targets` pacakge in R.
 
 
-#' @title identifies if a dirname is ane xisting pipeline path.
+#' @title identifies if a dirname is an existing pipeline path.
 #' @param ppl A String. name of pipeline
 #' @return A list of the name of pipeline and  the full path of the pipeline.
 #' @export
 pipeline_script_path <- function(ppl) {
-  full_dir_path <- here::here("pipelines", ppl)
+  full_dir_path <- rprojroot::find_rstudio_root_file("pipelines", ppl)
   pipeline_r_exists <- "pipeline.R" %in% basename(fs::dir_ls(full_dir_path))
 
   if (pipeline_r_exists) {
@@ -25,12 +25,14 @@ pipeline_script_path <- function(ppl) {
 #' @return A \code{pipelines} object.
 #' @export
 get_pipelines <- function() {
-  path_to_pipelines <- here::here("pipelines")
+  path_to_pipelines <- rprojroot::find_rstudio_root_file("pipelines")
   pipelines <-
     fs::dir_map(
     path_to_pipelines, fun = function(x) pipeline_script_path(basename(x)),
     type = "directory"
   )
+  # remove nulls
+  pipelines <- pipelines[lengths(pipelines) != 0]
   if (is.null(pipelines)) {
     stop("No pipelines exists! Consider creating one using
     `fluke pipeline create`")
@@ -48,17 +50,29 @@ prepare_targets <- function(x, ...) {
 
 
 #' @title Prepares pipelines for eventual `targets::tar_make`.
+#' @param  pipelines A pipelines object.
+#' @param name name of a specific pipelines.
 #' @return A list of `tar_target` or `tar_target_raw`
 #' objects from the `targets` package.
 #' @export
-prepare_targets.pipelines <- function(pipelines) {
-  lapply(pipelines, function(ppl) source(ppl$path)$value)
-
+prepare_targets.pipelines <- function(pipelines, name = NULL) {
+  if (is.null(name)) {
+    return(
+      lapply(pipelines, function(ppl) source(ppl$path)$value)
+    )
+  } else {
+    .bool <- name %in% sapply(pipelines, function(x) x$name)
+    assertthat::assert_that(sum(.bool) == 1)
+    ppl <- pipelines[[which(.bool)]]$path
+    return(source(ppl)$value)
+  }
 }
 
-#' @title get pipelines config
+
+#' @title get pipelines config, or specific config for pipeline
+#' @param name name of pipeline. if NULL, returns whole pipelines config.
 #' @export
-pipelines_config <- function() {
+pipelines_config <- function(name = NULL) {
   ppl_config_path <- rprojroot::find_rstudio_root_file(
     "config", "pipelines.yaml"
   )
@@ -67,6 +81,16 @@ pipelines_config <- function() {
   if (is.null(config$pipelines$version)) {
     warning("No version found. Consider defining pipelines version in `config/pipelines.yaml`.")
   }
+  if (!is.null(name)) {
+    tryCatch(
+      return(config[[name]]),
+      error = function(e) {
+        message(sprintf("no params set for pipeline '%s'.", name))
+        return(NULL)
+      }
+    )
+  }
+
   return(config)
 
 }

@@ -1,9 +1,10 @@
 import shutil
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 import click
 import fluke
 from fluke.utils import (
+    RemoveRequire,
     find_root_proj,
     _create_dir_using_cookiecutter,
     get_project_config,
@@ -93,26 +94,30 @@ def get_pipeline_names_click(ctx, args, incomplete):
     return [k for k in ppl_path_str if k.startswith(incomplete)]
 
 @pipeline.command('run')
-@click.option('--workers', type=int, default=1, required=False)
-@click.argument('name', required=True, shell_complete = get_pipeline_names_click)
+@click.option('--parallel', 'parallel', is_flag=True)
+@click.option('--target', required=False, default='')
+@click.option('--name', required=False)
 @click.pass_obj
-def run(deps: PipelineDependencies, name: str, workers: int) -> None:
+def run(deps: PipelineDependencies, name: Optional[str],
+target: Optional[str], parallel: bool) -> None:
     """Run the `targets` make for pipeline."""
 
-    if not Path(deps.project_pipeline_dir, name).exists():
-        raise Exception(
-            (f'Pipeline `{name}` does not exist. '
-            'Consider creating one using `pipeline create.`')
-        )
+    make_func = 'targets::tar_make'
+    if parallel:
+        make_func = 'targets::tar_make_future'
 
-    if workers > 1:
-        tar_make_cmd = 'targets::tar_make_future()'
-    else:
-        tar_make_cmd = 'targets::tar_make()'
+    if name is not None and target == '':
+        if not Path(deps.project_pipeline_dir, name).exists():
+            raise click.UsageError(
+                (f'Pipeline `{name}` does not exist. '
+                'Consider creating one using `pipeline create.`')
+            )
+        target = f"get_targets(prepare_targets(pipelines, name = '{name}'), names = TRUE)"
 
-    run_cmd = f"""
-    Sys.setenv(TAR_PROJECT = {sym_wrap(name)})
-    Sys.setenv(TAR_CONFIG = {sym_wrap(str(deps.targets_yaml_path))})
-    {tar_make_cmd}
+    tar_make_cmd =f"""
+    library(fluke)
+    pipelines <- get_pipelines()
+    {make_func}({target})
     """
-    run_r(run_cmd, ['-e'])
+
+    run_r(tar_make_cmd, ['-e'])

@@ -18,7 +18,6 @@ create_pipeline <- function(name, env = parent.frame()) {
 
   # write  pipelines.yml with version filled-in
   curr_config <- prev_config
-  curr_config$store <- "test"
   yaml::write_yaml(curr_config, "config/pipelines.yaml")
 
   args <- c("pipeline", "create", name)
@@ -27,7 +26,7 @@ create_pipeline <- function(name, env = parent.frame()) {
 
   withr::defer({
     # delete pipeline folder
-    fs::dir_delete(here::here("pipelines", name))
+    fs::dir_delete(file.path("pipelines", name))
     # restore previous config
     yaml::write_yaml(prev_config, "config/pipelines.yaml")
   },
@@ -43,13 +42,12 @@ write_to_pipeline_script <- function(
   expr_str <- deparse(substitute(expr))
   ppl <- fluke::pipeline_script_path(pipeline)
   ppl_dir <- dirname(ppl$path)
-
   # get old lines from script
   old_lines <- readLines(ppl$path)
 
   # append to pipeline.R or create a new file within the pipeline
   if (is.null(new_file)) {
-    write(expr_str, ppl$path)
+    write(expr_str, ppl$path, append = TRUE)
   } else {
     new_file_path <- file.path(ppl_dir, new_file)
     write(expr_str, new_file_path)

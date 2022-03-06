@@ -2,7 +2,7 @@
 % Please edit documentation in R/pipeline.R
 \name{pipeline_script_path}
 \alias{pipeline_script_path}
-\title{identifies if a dirname is ane xisting pipeline path.}
+\title{identifies if a dirname is an existing pipeline path.}
 \usage{
 pipeline_script_path(ppl)
 }
@@ -13,5 +13,5 @@ pipeline_script_path(ppl)
 A list of the name of pipeline and  the full path of the pipeline.
 }
 \description{
-identifies if a dirname is ane xisting pipeline path.
+identifies if a dirname is an existing pipeline path.
 }

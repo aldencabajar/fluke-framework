@@ -2,10 +2,13 @@
 % Please edit documentation in R/pipeline.R
 \name{pipelines_config}
 \alias{pipelines_config}
-\title{get pipelines config}
+\title{get pipelines config, or specific config for pipeline}
 \usage{
-pipelines_config()
+pipelines_config(name = NULL)
+}
+\arguments{
+\item{name}{name of pipeline. if NULL, returns whole pipelines config.}
 }
 \description{
-get pipelines config
+get pipelines config, or specific config for pipeline
 }

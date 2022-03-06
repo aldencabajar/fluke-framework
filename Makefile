@@ -28,6 +28,7 @@ r_pkg: $(build_pkg)
 
 $(build_pkg): $(shell find R -type f)
 	$(Rscript) -e "devtools::document()"
+	$(Rscript) -e "fs::dir_create('$(build_path)')"
 	$(Rscript) -e "devtools::build(path='$(build_path)')"
 
 r-pkg-install:

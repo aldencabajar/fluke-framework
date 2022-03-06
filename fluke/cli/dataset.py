@@ -6,6 +6,9 @@ from fluke.utils import RemoveRequire
 @click.group(invoke_without_command = True)
 @click.pass_context
 def dataset(ctx: click.Context) -> None:
+    """
+    Manipulate and migrate datasets.
+    """
     ds_config = Datasets()
     ctx.obj = ds_config
 

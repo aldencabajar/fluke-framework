@@ -74,7 +74,7 @@ def _is_projname_valid(proj_name: str) -> bool:
 @_project_cleanup
 def create(path: str, pkg_name: Optional[str], project_name: Optional[str]) -> None:
     """
-    CLI command to create a Fluke project.
+    create a Fluke project.
     """
     if project_name is None:
         project_name = click.prompt('Name of project')
